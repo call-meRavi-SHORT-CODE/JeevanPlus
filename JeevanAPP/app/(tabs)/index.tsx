@@ -67,19 +67,19 @@ export default function HomeScreen() {
 
       <View style={styles.emergencySection}>
         <View style={styles.emergencyHeader}>
-          <Text style={styles.emergencyTitle}>🚨 Emergency</Text>
-          <VoiceButton text="Emergency help available" size={20} />
+          <Text style={styles.emergencyTitle}>🚨 {t('emergency')}</Text>
+          <VoiceButton text={`${t('emergency')} help available`} size={20} />
         </View>
         <View style={styles.emergencyButtons}>
           <IconButton
             icon="🚑"
-            title="Call Ambulance"
+            title={t('callAmbulance')}
             color="#DC2626"
             onPress={() => {/* Handle emergency call */}}
           />
           <IconButton
             icon="🏥"
-            title="Nearest Hospital"
+            title={t('nearestHospital')}
             color="#7C2D12"
             onPress={() => {/* Handle nearest hospital */}}
           />
@@ -87,8 +87,8 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.healthTips}>
-        <Text style={styles.sectionTitle}>💡 Daily Health Tips</Text>
-        <VoiceButton text="Daily health tips" size={20} />
+        <Text style={styles.sectionTitle}>💡 {t('dailyHealthTips')}</Text>
+        <VoiceButton text={t('dailyHealthTips')} size={20} />
         <View style={styles.tipCard}>
           <Text style={styles.tipText}>
             Drink at least 8 glasses of water daily to stay hydrated and healthy.

@@ -90,7 +90,7 @@ export default function SymptomCheckerScreen() {
         
         <ScrollView style={styles.content}>
           <View style={styles.resultCard}>
-            <Text style={styles.resultTitle}>Assessment Complete</Text>
+            <Text style={styles.resultTitle}>{t('assessmentComplete')}</Text>
             <View style={[
               styles.severityBadge, 
               { backgroundColor: 
@@ -105,7 +105,8 @@ export default function SymptomCheckerScreen() {
                   recommendation.severity === 'medium' ? '#D97706' : '#16A34A' 
                 }
               ]}>
-                {recommendation.severity.toUpperCase()} PRIORITY
+                {recommendation.severity === 'high' ? t('highPriority') :
+                 recommendation.severity === 'medium' ? t('mediumPriority') : t('lowPriority')}
               </Text>
             </View>
             
@@ -115,10 +116,11 @@ export default function SymptomCheckerScreen() {
             
             <TouchableOpacity 
               style={styles.actionButton}
-              onPress={() => router.push('/doctor-consultation')}
+              onPress={() => router.push('/doctors')}
             >
               <Text style={styles.actionButtonText}>
-                {recommendation.action}
+                {recommendation.severity === 'high' ? t('consultDoctorNow') :
+                 recommendation.severity === 'medium' ? t('scheduleConsultation') : t('getFirstAidTips')}
               </Text>
             </TouchableOpacity>
             
@@ -127,7 +129,7 @@ export default function SymptomCheckerScreen() {
               onPress={resetChecker}
             >
               <Text style={styles.secondaryButtonText}>
-                Check Another Symptom
+                {t('checkAnotherSymptom')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -157,7 +159,7 @@ export default function SymptomCheckerScreen() {
         <View style={styles.questionContainer}>
           <View style={styles.progressContainer}>
             <Text style={styles.progressText}>
-              Question {currentQuestionIndex + 1} of {questions.length}
+              {t('question')} {currentQuestionIndex + 1} {t('of')} {questions.length}
             </Text>
             <View style={styles.progressBar}>
               <View 
@@ -215,11 +217,11 @@ export default function SymptomCheckerScreen() {
       
       <ScrollView style={styles.content}>
         <View style={styles.instruction}>
-          <Text style={styles.instructionTitle}>Select your main symptom</Text>
+          <Text style={styles.instructionTitle}>{t('selectMainSymptom')}</Text>
           <Text style={styles.instructionText}>
-            Choose the symptom that bothers you the most
+            {t('chooseSymptom')}
           </Text>
-          <VoiceButton text="Select your main symptom" />
+          <VoiceButton text={t('selectMainSymptom')} />
         </View>
         
         <View style={styles.symptomList}>
