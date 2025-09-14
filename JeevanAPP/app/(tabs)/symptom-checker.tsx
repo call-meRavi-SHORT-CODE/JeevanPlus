@@ -222,22 +222,28 @@ export default function SymptomCheckerScreen() {
           <VoiceButton text="Select your main symptom" />
         </View>
         
-        <View style={styles.symptomGrid}>
+        <View style={styles.symptomList}>
           {COMMON_SYMPTOMS.map((symptom) => (
-            <IconButton
+            <TouchableOpacity
               key={symptom.id}
-              icon={symptom.icon}
-              title={symptom.name}
+              style={styles.symptomItem}
               onPress={() => handleSymptomSelect(symptom.id)}
-              color={
-                symptom.category === 'general' ? '#EF4444' :
-                symptom.category === 'respiratory' ? '#3B82F6' :
-                symptom.category === 'pain' ? '#F59E0B' :
-                symptom.category === 'digestive' ? '#22C55E' :
-                symptom.category === 'dermatological' ? '#8B5CF6' :
-                '#6B7280'
-              }
-            />
+            >
+              <View style={[
+                styles.symptomIconContainer,
+                { backgroundColor: 
+                  symptom.category === 'general' ? '#EF4444' :
+                  symptom.category === 'respiratory' ? '#3B82F6' :
+                  symptom.category === 'pain' ? '#F59E0B' :
+                  symptom.category === 'digestive' ? '#22C55E' :
+                  symptom.category === 'dermatological' ? '#8B5CF6' :
+                  '#6B7280'
+                }
+              ]}>
+                <Text style={styles.symptomIcon}>{symptom.icon}</Text>
+              </View>
+              <Text style={styles.symptomName}>{symptom.name}</Text>
+            </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
@@ -272,11 +278,38 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 16,
   },
-  symptomGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  symptomList: {
     padding: 16,
-    justifyContent: 'space-between',
+  },
+  symptomItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  symptomIconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  symptomIcon: {
+    fontSize: 28,
+  },
+  symptomName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+    flex: 1,
   },
   questionContainer: {
     flex: 1,

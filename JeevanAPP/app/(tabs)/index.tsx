@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   menuGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    padding: 20,
+    padding: 9,
     justifyContent: 'space-between',
   },
   emergencySection: {
