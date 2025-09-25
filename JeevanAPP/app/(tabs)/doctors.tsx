@@ -22,10 +22,10 @@ export default function DoctorsScreen() {
   });
 
   const handleDoctorSelect = (doctor: Doctor) => {
-    // Navigate to consultation screen with selected doctor
+    // Navigate to DoctorChatScreen in the tabs folder and pass the doctor object
     router.push({
-      pathname: '/doctor-consultation',
-      params: { doctorId: doctor.id }
+      pathname: '/(tabs)/DoctorChatScreen',
+      params: { doctor: JSON.stringify(doctor) }
     });
   };
 

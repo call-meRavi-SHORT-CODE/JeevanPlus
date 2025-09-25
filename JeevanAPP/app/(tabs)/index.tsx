@@ -23,7 +23,7 @@ export default function HomeScreen() {
       icon: '👨‍⚕️',
       title: t('doctorConsultation'),
       color: '#3B82F6',
-      route: '/doctor-consultation'
+      route: '/doctors'
     },
     {
       icon: '💊',

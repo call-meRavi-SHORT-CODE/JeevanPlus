@@ -51,7 +51,21 @@ export function DoctorCard({ doctor, onPress }: DoctorCardProps) {
       
       <View style={styles.consultationModes}>
         {doctor.consultationModes.map((mode) => (
-          <View key={mode} style={styles.modeChip}>
+          <TouchableOpacity
+            key={mode}
+            style={styles.modeChip}
+            onPress={() => {
+              if (mode === 'video') {
+                // Use expo-router navigation to DoctorChatScreen and pass doctor object
+                const { useRouter } = require('expo-router');
+                const router = useRouter();
+                router.push({
+                  pathname: '/DoctorChatScreen',
+                  params: { doctor: JSON.stringify(doctor) }
+                });
+              }
+            }}
+          >
             <Ionicons 
               name={
                 mode === 'video' ? 'videocam' : 
@@ -61,7 +75,7 @@ export function DoctorCard({ doctor, onPress }: DoctorCardProps) {
               color="#3B82F6" 
             />
             <Text style={styles.modeText}>{t(mode === 'video' ? 'videoCall' : mode === 'audio' ? 'audioCall' : 'chat')}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
     </TouchableOpacity>
