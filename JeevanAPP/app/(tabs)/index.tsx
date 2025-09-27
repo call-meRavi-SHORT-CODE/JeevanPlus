@@ -11,21 +11,13 @@ import {
   StatusBar // Added for status bar control
 } from 'react-native';
 import { useRouter } from 'expo-router';
-// import { useLanguage } from '@/contexts/LanguageContext'; // Assuming these contexts are correctly set up
-// import { useAuth } from '@/contexts/AuthContext'; 
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext'; 
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context'; // For proper safe area handling
 
 const { width } = Dimensions.get('window');
-
-// Placeholder for contexts if not available, uncomment actual imports if they exist
-const useLanguage = () => ({
-  t: (key) => key, // Simple passthrough for demonstration
-  currentLanguage: 'en'
-});
-const useAuth = () => ({
-  user: { name: 'User' } // Simple placeholder
-});
 
 // Color constants
 const PRIMARY_BLUE = '#1976D2';
@@ -150,6 +142,8 @@ export default function HomeScreen() {
               />
             </View>
           </View>
+          {/* Add Language Switcher below header */}
+          <LanguageSwitcher />
           {/* Search Bar - Integrated into the header with rounded corners and shadow */}
           <View style={styles.searchBarWrapper}>
             <TouchableOpacity style={styles.searchBar} activeOpacity={0.7}>

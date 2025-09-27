@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
   },
   activeButton: {
-    backgroundColor: '#22C55E',
+    backgroundColor: '#1976D2', // Changed from green to blue
   },
   buttonText: {
     fontSize: 14,
