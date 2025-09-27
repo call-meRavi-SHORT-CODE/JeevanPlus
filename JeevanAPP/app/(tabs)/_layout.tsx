@@ -10,12 +10,13 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#22C55E',
-        tabBarInactiveTintColor: '#6B7280',
+        tabBarActiveTintColor: '#1976D2', // Blue icon and label when active
+        tabBarInactiveTintColor: '#6B7280', // Grey icon and label when inactive
         tabBarStyle: {
           height: 70,
           paddingBottom: 8,
           paddingTop: 8,
+          backgroundColor: '#FFFFFF', // White background
         },
         tabBarLabelStyle: {
           fontSize: 12,
@@ -25,7 +26,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: t('home'),
+          title: 'Home', // English label
           tabBarIcon: ({ size, color }) => (
             <Ionicons name="home" size={size} color={color} />
           ),
@@ -34,7 +35,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="symptom-checker"
         options={{
-          title: t('symptomChecker'),
+          title: 'Symptom Checker', // English label
           tabBarIcon: ({ size, color }) => (
             <Ionicons name="medical" size={size} color={color} />
           ),
@@ -43,7 +44,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="doctors"
         options={{
-          title: t('doctorConsultation'),
+          title: 'Consult Doctor', // English label
           tabBarIcon: ({ size, color }) => (
             <Ionicons name="people" size={size} color={color} />
           ),
@@ -52,7 +53,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="pharmacy"
         options={{
-          title: t('pharmacyFinder'),
+          title: 'Find Pharmacy', // English label
           tabBarIcon: ({ size, color }) => (
             <Ionicons name="medical-outline" size={size} color={color} />
           ),
@@ -61,7 +62,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="records"
         options={{
-          title: t('healthRecords'),
+          title: 'Health Records', // English label
           tabBarIcon: ({ size, color }) => (
             <Ionicons name="document-text" size={size} color={color} />
           ),
