@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, Keyboard } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -21,7 +21,7 @@ export default function LoginScreen() {
       Alert.alert('Error', 'Please enter a valid 10-digit phone number');
       return;
     }
-
+    Keyboard.dismiss();
     setLoading(true);
     try {
       const success = await sendOTP(phoneNumber);
@@ -43,12 +43,12 @@ export default function LoginScreen() {
       Alert.alert('Error', 'Please enter a valid 4-digit OTP');
       return;
     }
-
+    Keyboard.dismiss();
     setLoading(true);
     try {
       const success = await login(phoneNumber, otp);
       if (success) {
-        router.replace('/(tabs)');
+        router.replace('/');
       } else {
         Alert.alert('Error', 'Invalid OTP. Please try again.');
       }
@@ -99,7 +99,10 @@ export default function LoginScreen() {
               <TextInput
                 style={styles.input}
                 value={otp}
-                onChangeText={setOtp}
+                onChangeText={(val) => {
+                  setOtp(val);
+                  if (val.length === 4) Keyboard.dismiss();
+                }}
                 placeholder="1234"
                 keyboardType="numeric"
                 maxLength={4}
@@ -156,6 +159,11 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginBottom: 40,
+    backgroundColor: '#1976D2', // Fill top with primary blue
+    paddingTop: 40,
+    paddingBottom: 24,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
   },
   logo: {
     width: 80,
@@ -172,12 +180,12 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#111827',
+    color: 'white', // Make app name white for contrast
     marginBottom: 8,
   },
   welcome: {
     fontSize: 18,
-    color: '#6B7280',
+    color: 'white', // Make welcome text white for contrast
   },
   form: {
     flex: 1,

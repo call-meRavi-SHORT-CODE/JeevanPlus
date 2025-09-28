@@ -8,7 +8,7 @@ import {
   Dimensions,
   Platform,
   Animated,
-  StatusBar // Added for status bar control
+  StatusBar
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
@@ -71,6 +71,8 @@ export default function HomeScreen() {
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const [selectedLocation, setSelectedLocation] = useState('Nabha');
   const [selectedProblem, setSelectedProblem] = useState<string | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordTime, setRecordTime] = useState(0);
 
   const locations = ['Bangalore', 'Mumbai', 'Delhi', 'Chennai', 'Hyderabad', 'Pune'];
 
@@ -81,34 +83,14 @@ export default function HomeScreen() {
     "Eat colorful fruits and vegetables for essential vitamins and minerals."
   ];
 
-  const commonHealthProblems = [
-    'Fever',
-    'Cough',
-    'Headache',
-    'Stomach Pain',
-    'Back Pain',
-    'Diabetes',
-    'Hypertension',
-    'Allergy',
-    'Cold',
-    'Acidity',
-    'Asthma',
-  ];
+  const languageNames: { [key: string]: string } = {
+    punjabi: 'Punjabi',
+    hindi: 'Hindi',
+    english: 'English',
+  };
 
-  // Doctor specialties (only 3 as requested)
-  const specialtyItems = [
-    { icon: '🩺', title: 'General\nPhysician', color: '#E3F2FD', route: '/doctors?specialty=general' },
-    { icon: '💆‍♀️', title: 'Skin &\nHair', color: '#F3E5F5', route: '/doctors?specialty=skin' }, // Changed emoji for hair
-    { icon: '🤰', title: "Women's\nHealth", color: '#FFEBEE', route: '/doctors?specialty=women' }, // Changed emoji for women's health
-  ];
-
-  const getLanguageDisplayName = (code) => {
-    const languageNames = {
-      'en': 'English',
-      'hi': 'हिंदी',
-      'kn': 'ಕನ್ನಡ'
-    };
-    return languageNames[code] || 'English';
+  const getLanguageDisplayName = (code: string): string => {
+    return languageNames[code] || 'Punjabi';
   };
 
   useEffect(() => {
@@ -118,6 +100,16 @@ export default function HomeScreen() {
 
     return () => clearInterval(tipInterval);
   }, []);
+
+  useEffect(() => {
+    let timer: any;
+    if (isRecording) {
+      timer = setInterval(() => setRecordTime((t) => t + 1), 1000);
+    } else {
+      setRecordTime(0);
+    }
+    return () => clearInterval(timer);
+  }, [isRecording]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -134,7 +126,7 @@ export default function HomeScreen() {
             <View style={styles.headerRight}>
               <Text style={styles.languageText}>{getLanguageDisplayName(currentLanguage)}</Text>
               <EnhancedVoiceButton 
-                text={`Welcome to Healthcare App`} 
+                text={t('Welcome to JeevanPlus')} 
                 size={18}
                 style={{ marginLeft: 12, backgroundColor: 'rgba(255,255,255,0.25)', borderColor: 'rgba(255,255,255,0.3)' }}
                 onPress={() => console.log('App welcome voice triggered')}
@@ -148,147 +140,92 @@ export default function HomeScreen() {
           <View style={styles.searchBarWrapper}>
             <TouchableOpacity style={styles.searchBar} activeOpacity={0.7}>
               <Ionicons name="search" size={20} color="#6B7280" />
-              <Text style={styles.searchPlaceholder}>Search for doctors, medicines, tests...</Text>
+              <Text style={styles.searchPlaceholder}>{t('Search') || 'Search for doctors, medicines, tests...'}</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Main Feature Cards (Physical Appointment, Instant Video Consult style) */}
         <View style={styles.mainFeaturesSection}>
-          {[
+          {[ // Only main features, direct navigation
             {
               id: 'consult-doctor',
-              icon: 'stethoscope', // Changed to represent medical consultation
-              title: 'Consult Doctor',
-              subtitle: 'Video & chat with specialists',
-              route: '/doctors',
-              image: 'https://via.placeholder.com/150/FFC107/000000?text=Consult+Doctor', // Placeholder image
-              backgroundColor: '#FFFDE7', // Light yellow background
-              iconColor: '#FBC02D', // Darker yellow for icon
+              icon: 'chatbubble-ellipses', // Ionicons chat icon
+              title: t('doctorConsultation'),
+              subtitle: t('videoCall') + ' & ' + t('chat') + ' ' + t('doctorConsultation'),
+              route: '/DoctorChatScreen', // Direct to chat interface
             },
             {
               id: 'check-symptoms',
-              icon: 'clipboard-outline', // Changed to represent symptom checking
-              title: 'Check Symptoms',
-              subtitle: 'AI Symptom Checker',
-              route: '/check-symptoms',
-              image: 'https://via.placeholder.com/150/E0F7FA/000000?text=AI+Checker', // Placeholder image
-              backgroundColor: '#E0F7FA', // Light blue background
-              iconColor: '#00BCD4', // Darker blue for icon
+              icon: 'clipboard-outline',
+              title: t('symptomChecker'),
+              subtitle: t('AI Symptom Checker') || 'AI Symptom Checker',
+              route: '/symptom-checker', // Direct to symptom checker
             },
-          ].map((item, index) => (
+          ].map((item) => (
             <TouchableOpacity
               key={item.id}
               style={[styles.mainFeatureCard, { backgroundColor: LIGHT_BLUE }]}
-              onPress={() => router.push(item.route)}
+              onPress={() => router.push(item.route as any)}
               activeOpacity={0.8}
             >
               <View>
                 <Text style={styles.mainFeatureTitle}>{item.title}</Text>
                 <Text style={styles.mainFeatureSubtitle}>{item.subtitle}</Text>
               </View>
-              <Ionicons name={item.icon} size={40} color={PRIMARY_BLUE} style={styles.mainFeatureIcon} />
+              <Ionicons name={item.icon as any} size={40} color={PRIMARY_BLUE} style={styles.mainFeatureIcon} />
             </TouchableOpacity>
           ))}
         </View>
 
         {/* Other Services Section (Medicines, Health Records, Book Appointments) */}
         <View style={styles.otherServicesSection}>
-          {[
+          {[ // Only main features, direct navigation
             {
               id: 'find-pharmacy',
-              icon: 'pill',
-              title: 'Find Pharmacy',
+              icon: 'medical-outline',
+              title: t('pharmacyFinder'),
               route: '/pharmacy',
-              color: '#673AB7', // Deep Purple
             },
             {
               id: 'health-records',
               icon: 'document-text-outline',
-              title: 'Health Records',
-              route: '/health-records',
-              color: '#F44336', // Red
+              title: t('healthRecords'),
+              route: '/records',
             },
             {
               id: 'book-appointments',
               icon: 'calendar-outline',
-              title: 'Book Appointments',
-              route: '/appointment',
-              color: '#2196F3', // Blue
+              title: t('scheduleConsultation'),
+              route: '/book-appointment',
             },
-          ].map((item, index) => (
+          ].map((item) => (
             <TouchableOpacity
               key={item.id}
               style={styles.otherServiceCard}
-              onPress={() => router.push(item.route)}
+              onPress={() => router.push(item.route as any)}
               activeOpacity={0.8}
             >
-              <Ionicons name={item.icon} size={28} color={PRIMARY_BLUE} />
+              <Ionicons name={item.icon as any} size={28} color={PRIMARY_BLUE} />
               <Text style={styles.otherServiceTitle}>{item.title}</Text>
             </TouchableOpacity>
           ))}
         </View>
         
-        {/* Find Doctor by Specialty */}
-        <View style={styles.specialtySection}>
-          <View style={styles.sectionHeader}>
-            <Text style={[styles.sectionTitle, { color: '#111' }]}>Find a Doctor for your Health Problem</Text>
-            <EnhancedVoiceButton 
-              text="Find a Doctor for your Health Problem" 
-              size={18} 
-              onPress={() => console.log('Find Doctor voice triggered')}
-              iconColor="#1976D2" // Blue for icons in white background sections
-              style={{ backgroundColor: '#F0F4FF', borderColor: '#E0E7EF' }}
-            />
-          </View>
-          {/* Common Health Problems Chips */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipScroll}>
-            {commonHealthProblems.map((problem, idx) => (
-              <TouchableOpacity
-                key={problem}
-                style={[
-                  styles.chip,
-                  selectedProblem === problem && styles.chipSelected
-                ]}
-                onPress={() => setSelectedProblem(problem)}
-                activeOpacity={0.8}
-              >
-                <Text style={[
-                  styles.chipText,
-                  selectedProblem === problem && styles.chipTextSelected
-                ]}>{problem}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-          <View style={styles.specialtyGrid}>
-            {specialtyItems.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[styles.specialtyItem, { backgroundColor: item.color }]}
-                onPress={() => router.push(item.route)}
-                activeOpacity={0.9}
-              >
-                <Text style={styles.specialtyIcon}>{item.icon}</Text>
-                <Text style={styles.specialtyTitle}>{item.title}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
         {/* Emergency Section */}
         <View style={styles.emergencySection}>
           <View style={styles.emergencyCard}>
             <View style={styles.emergencyHeader}>
-              <Text style={styles.emergencyTitle}>🚨 Emergency</Text>
+              <Text style={styles.emergencyTitle}>🚨 {t('emergency')}</Text>
               <EnhancedVoiceButton 
-                text="Emergency help available. Call Ambulance or find Nearest Hospital." 
+                text={t('emergency') + ' ' + t('callAmbulance') + ' ' + t('nearestHospital')} 
                 size={16}
                 onPress={() => console.log('Emergency voice triggered')}
                 iconColor="white"
                 style={{ backgroundColor: 'rgba(255,255,255,0.25)', borderColor: 'rgba(255,255,255,0.3)' }}
               />
             </View>
-            <Text style={styles.emergencySubtitle}>24/7 Emergency Support</Text>
+            <Text style={styles.emergencySubtitle}>24/7 {t('emergency')} {t('support') || 'Support'}</Text>
             <View style={styles.emergencyButtons}>
               <TouchableOpacity 
                 style={styles.emergencyButton}
@@ -297,7 +234,7 @@ export default function HomeScreen() {
                 <View style={styles.emergencyButtonIcon}>
                   <Text style={styles.emergencyButtonEmoji}>🚑</Text>
                 </View>
-                <Text style={styles.emergencyButtonText}>Call Ambulance</Text>
+                <Text style={styles.emergencyButtonText}>{t('callAmbulance')}</Text>
               </TouchableOpacity>
               <TouchableOpacity 
                 style={styles.emergencyButton}
@@ -306,7 +243,7 @@ export default function HomeScreen() {
                 <View style={styles.emergencyButtonIcon}>
                   <Text style={styles.emergencyButtonEmoji}>🏥</Text>
                 </View>
-                <Text style={styles.emergencyButtonText}>Nearest Hospital</Text>
+                <Text style={styles.emergencyButtonText}>{t('nearestHospital')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -316,7 +253,7 @@ export default function HomeScreen() {
         <View style={styles.healthTipsSection}>
           <View style={styles.healthTipsCard}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>💡 Daily Health Tips</Text>
+              <Text style={styles.sectionTitle}>💡 {t('dailyHealthTips')}</Text>
               <EnhancedVoiceButton 
                 text={healthTips[currentTipIndex]} 
                 size={16}
@@ -343,8 +280,33 @@ export default function HomeScreen() {
 
         <View style={{ height: 30 }} />
       </ScrollView>
+      {/* Static Voice Record Button at Bottom Right */}
+      <View style={styles.voiceRecordWrapper}>
+        <TouchableOpacity 
+          style={styles.voiceRecordButton}
+          activeOpacity={0.8}
+          onPress={() => setIsRecording(true)}
+        >
+          <Ionicons name={isRecording ? 'mic-outline' : 'mic'} size={32} color={PRIMARY_BLUE} />
+        </TouchableOpacity>
+      </View>
+      {/* Recording UI Overlay */}
+      {isRecording && (
+        <View style={styles.recordingOverlay}>
+          <View style={styles.recordingBox}>
+            <Ionicons name="mic" size={32} color={PRIMARY_BLUE} />
+            <Text style={styles.recordingText}>Recording...</Text>
+            <Text style={styles.recordingTimer}>{`${Math.floor(recordTime/60).toString().padStart(2, '0')}:${(recordTime%60).toString().padStart(2, '0')}`}</Text>
+            <TouchableOpacity style={styles.stopButton} onPress={() => setIsRecording(false)}>
+              <Ionicons name="stop" size={28} color={WHITE} />
+              <Text style={styles.stopButtonText}>Stop</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   );
+
 }
 
 const styles = StyleSheet.create({
@@ -515,47 +477,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#111', // Enforced black for section title
   },
-
-  // Specialty Section (Find a Doctor)
-  specialtySection: {
-    paddingHorizontal: 16,
-    marginTop: 10,
-    marginBottom: 30,
-    backgroundColor: '#F8FAFF', // Subtle blue-tinted white
-    borderRadius: 12,
-    paddingTop: 10,
-    paddingBottom: 18,
-  },
-  specialtyGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start', // Align to start since only 3 items
-    gap: (width - (16 * 2) - (80 * 3)) / 2, // Calculate dynamic gap for 3 items
-  },
-  specialtyItem: {
-    width: 80, // Fixed width for each item
-    height: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 12,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    backgroundColor: LIGHT_BLUE, // Blue for specialty
-  },
-  specialtyIcon: {
-    fontSize: 28,
-    marginBottom: 4,
-  },
-  specialtyTitle: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#374151',
-    textAlign: 'center',
-    lineHeight: 14,
-  },
   
   // Emergency Section
   emergencySection: {
@@ -652,33 +573,77 @@ const styles = StyleSheet.create({
     backgroundColor: PRIMARY_BLUE,
     width: 18,
   },
-
-  // Add styles for problem chips
-  chipScroll: {
-    flexDirection: 'row',
-    marginBottom: 16,
-    marginLeft: -4,
+  // Voice Record Button styles
+  voiceRecordWrapper: {
+    position: 'absolute',
+    right: 24,
+    bottom: 32,
+    alignItems: 'center',
+    zIndex: 100,
   },
-  chip: {
-    backgroundColor: '#E3F2FD',
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 7,
-    marginHorizontal: 4,
-    borderWidth: 1,
-    borderColor: '#BBDEFB',
+  voiceRecordButton: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(33, 150, 243, 0.25)', // Transparent accent blue
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: PRIMARY_BLUE,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    borderWidth: 2,
+    borderColor: PRIMARY_BLUE,
   },
-  chipSelected: {
-    backgroundColor: '#1976D2',
-    borderColor: '#1976D2',
+  recordingOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: 0,
+    backgroundColor: 'rgba(33,150,243,0.10)',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    zIndex: 200,
   },
-  chipText: {
-    color: '#1976D2',
+  recordingBox: {
+    marginBottom: 80,
+    backgroundColor: PRIMARY_BLUE,
+    borderRadius: 20,
+    padding: 24,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+  },
+  recordingText: {
+    color: WHITE,
+    fontSize: 18,
     fontWeight: '600',
-    fontSize: 13,
+    marginTop: 8,
+    marginBottom: 4,
   },
-  chipTextSelected: {
-    color: 'white',
+  recordingTimer: {
+    color: WHITE,
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  stopButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: ACCENT_BLUE,
+    borderRadius: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    marginTop: 8,
+  },
+  stopButtonText: {
+    color: WHITE,
+    fontWeight: '700',
+    fontSize: 16,
+    marginLeft: 8,
   },
 });
 

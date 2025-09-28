@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Header } from '@/components/common/Header';
-import { PharmacyCard } from '@/components/cards/PharmacyCard';
+
 import { VoiceButton } from '@/components/common/VoiceButton';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { MOCK_PHARMACIES } from '@/constants/mockData';
+import PharmacyCard from '../../components/cards/PharmacyCard';
 
 export default function PharmacyScreen() {
   const [searchMedicine, setSearchMedicine] = useState('');

@@ -1,8 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image, Modal, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker'; // Import ImagePicker
+
 // import { Camera } from 'expo-camera'; // Uncomment if you want real camera
 
 export default function DoctorChatScreen() {
@@ -21,7 +23,8 @@ export default function DoctorChatScreen() {
   const route = useRoute();
   const [message, setMessage] = useState('');
   const [showCamera, setShowCamera] = useState(false);
-  const [ringing, setRinging] = useState(false);480
+  const [ringing, setRinging] = useState(false);
+  const [selectedMedia, setSelectedMedia] = useState<{ uri: string; type: string } | null>(null);
 
   // const cameraRef = useRef(null); // For real camera
 
@@ -29,6 +32,38 @@ export default function DoctorChatScreen() {
     setShowCamera(true);
     setRinging(true);
     setTimeout(() => setRinging(false), 3000); // Fake ring for 3s
+  };
+
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission required', 'Please allow access to your gallery to select images.');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 1,
+    });
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setSelectedMedia({ uri: result.assets[0].uri, type: 'image' });
+    }
+  };
+
+  const pickVideo = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission required', 'Please allow access to your gallery to select videos.');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+      allowsEditing: false,
+      quality: 1,
+    });
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setSelectedMedia({ uri: result.assets[0].uri, type: 'video' });
+    }
   };
 
   return (
@@ -51,9 +86,20 @@ export default function DoctorChatScreen() {
 
       {/* Chat area (placeholder) */}
       <View style={styles.chatArea}>
-        <Text style={{ color: '#888', textAlign: 'center', marginTop: 32 }}>
-          Chat messages will appear here.
-        </Text>
+        {selectedMedia ? (
+          selectedMedia.type === 'image' ? (
+            <Image source={{ uri: selectedMedia.uri }} style={{ width: 200, height: 200, borderRadius: 12, alignSelf: 'center' }} />
+          ) : (
+            <View style={{ alignItems: 'center' }}>
+              <Text style={{ color: '#888', marginBottom: 8 }}>Video selected:</Text>
+              <Text style={{ color: '#3B82F6' }}>{selectedMedia.uri}</Text>
+            </View>
+          )
+        ) : (
+          <Text style={{ color: '#888', textAlign: 'center', marginTop: 32 }}>
+            Chat messages will appear here.
+          </Text>
+        )}
       </View>
 
       {/* Input area */}
@@ -65,11 +111,11 @@ export default function DoctorChatScreen() {
           onChangeText={setMessage}
         />
         <View style={styles.inputActions}>
-          <TouchableOpacity style={styles.actionBtn}>
+          <TouchableOpacity style={styles.actionBtn} onPress={pickVideo}>
             <Ionicons name="videocam" size={20} color="#3B82F6" />
             <Text style={styles.actionText}>Video</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionBtn}>
+          <TouchableOpacity style={styles.actionBtn} onPress={pickImage}>
             <Ionicons name="image" size={20} color="#3B82F6" />
             <Text style={styles.actionText}>Image</Text>
           </TouchableOpacity>
